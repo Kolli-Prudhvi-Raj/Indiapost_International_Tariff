@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Tariff</title>
+    <style>
+        body {
+            font-family: Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 20px;
+        }
+    
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+    
+        th {
+            background-color: #4CAF50;
+            color: white;
+            text-transform: uppercase;
+            font-size: 14px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+    
+        td {
+            background-color: #fff;
+            color: #333;
+        }
+    
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+    
+        tr:hover td {
+            background-color: #d1ffd6;
+            cursor: pointer;
+        }
+    
+        caption {
+            caption-side: top;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f0000;
+
+        }
+        container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            background-color: #dbb1b1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(125, 7, 7);
+        }
+        input, select{
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 150px;
+        }
+        button {
+            background-color: #055507; /* Green background */
+            border: none; /* Remove default border */
+            color: rgb(221, 171, 171); /* White text */
+            padding: 8px 20px; /* Padding inside the button */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Inline-block for spacing */
+            font-size: 16px; /* Font size */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease; /* Smooth hover effect */
+        }
+        main-head {
+            color: rgb(224, 38, 38);
+            text-transform: uppercase;
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 36px; /* Font size */
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            background-color: #dbb1b1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(125, 7, 7);
+
+        }
+    </style>
+    <script type="text/javascript" src="master.js"></script>
+    <script>
+        // Function to convert numbers into INR fti=Format to INR
+        function fti(amount) {
+                return new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    minimumFractionDigits: 0, // Show 2 decimal places
+                }).format(amount);
+            }
+
+
+        function addLog(dest,wgt,ap,ems,itps,rl){
+            
+            if (typeof ap === 'number'){
+                ap=fti(Math.round(ap));
+            }
+            if (typeof ems === 'number'){
+                ems=fti(Math.round(ems));
+            }
+            if (typeof itps === 'number'){
+                itps=fti(Math.round(itps));
+            }
+            if (typeof rl === 'number'){
+                rl=fti(Math.round(rl));
+            }
+            
+            wgt=wgt+' Grams';
+
+            var tbody=document.getElementById('log');
+
+            var tr=document.createElement('tr');
+
+            var td1=document.createElement('td');
+            var td2=document.createElement('td');
+            var td3=document.createElement('td');
+            var td4=document.createElement('td');
+            var td5=document.createElement('td');
+            var td6=document.createElement('td');
+
+            var dest_node=document.createTextNode(dest);
+            var wgt_node=document.createTextNode(wgt);
+            var ap_node=document.createTextNode(ap);
+            var ems_node=document.createTextNode(ems);
+            var itps_node=document.createTextNode(itps);
+            var rl_node=document.createTextNode(rl);
+
+            // var dest_node=document.createTextNode('dest');
+            // var wgt_node=document.createTextNode('wgt');
+            // var ap_node=document.createTextNode('ap');
+            // var ems_node=document.createTextNode('ems');
+            // var itps_node=document.createTextNode('itps');
+            // var rl_node=document.createTextNode('rl');
+
+            td1.appendChild(dest_node);
+            td2.appendChild(wgt_node);
+            td3.appendChild(ap_node);
+            td4.appendChild(ems_node);
+            td5.appendChild(itps_node);
+            td6.appendChild(rl_node);
+
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+            tr.appendChild(td5);
+            tr.appendChild(td6);
+
+            tbody.insertBefore(tr,tbody.firstChild);
+
+        }
+
+        function tariff_cal(destination,weight){
+            dest_object=master_data.find(dest=>dest.Destination===destination);
+            const air1=parseInt(dest_object['air1']);
+            const air2=parseInt(dest_object['air2']);
+            const air_wt=parseInt(dest_object['air_wt']);
+
+            const ems1=parseInt(dest_object['ems1']);
+            const ems2=parseInt(dest_object['ems2']);
+            const ems_wt=parseInt(dest_object['ems_wt']);
+
+            const itps1=parseInt(dest_object['itps1']);
+            const itps2=parseInt(dest_object['itps2']);
+            const itps_wt=parseInt(dest_object['itps_wt']);
+
+            const rl1=parseInt(dest_object['rl1']);
+            const rl2=parseInt(dest_object['rl2']);
+            const rl_wt=parseInt(dest_object['rl_wt']);
+            
+            let air_tar=0;
+            let air_gst=0;
+            let air_tar_total=0;
+
+            let ems_tar=0;
+            let ems_gst=0;
+            let ems_tar_total=0;
+
+            let itps_tar=0;
+            let itps_gst=0;
+            let itps_tar_total=0;
+
+            let rl_tar=0;
+            let rl_gst=0;
+            let rl_tar_total=0;
+
+            // Air Parcel tariff Calculation begin
+
+            if(air_wt==0){
+                air_tar='No Service';
+                air_gst='No Service';
+                air_tar_total='No Service';
+            } else if(weight>air_wt){
+                air_tar='Maximum weight is '+air_wt+' Grams';
+                air_gst='Maximum weight is '+air_wt+' Grams';
+                air_tar_total='Maximum weight is '+air_wt+' Grams';
+            } else{
+                if(weight<=250){
+                    air_tar=air1;
+                    air_gst=air_tar*18/100;
+                    air_tar_total=air_tar+air_gst;
+                } else{
+                    if((weight-250)%250===0){
+                        air_tar=air1+((weight-250)/250)*air2;
+                        air_gst=air_tar*18/100;
+                        air_tar_total=air_tar+air_gst;
+                    } else{
+                        air_tar=air1+(1+Math.floor((weight-250)/250))*air2;
+                        air_gst=air_tar*18/100;
+                        air_tar_total=air_tar+air_gst;
+                    }
+                }
+            }
+            // Air Parcel tariff calculation end
+
+            // EMS tariff Calculation begin
+            if(ems_wt==0){
+                ems_tar='No Service';
+                ems_gst='No Service';
+                ems_tar_total='No Service';
+            } else if(weight>ems_wt){
+                ems_tar='Maximum weight is '+ems_wt+' Grams';
+                ems_gst='Maximum weight is '+ems_wt+' Grams';
+                ems_tar_total='Maximum weight is '+ems_wt+' Grams';
+            } else{
+                if(weight<=250){
+                    ems_tar=ems1;
+                    ems_gst=ems_tar*18/100;
+                    ems_tar_total=ems_tar+ems_gst;
+                } else{
+                    if((weight-250)%250===0){
+                        ems_tar=ems1+((weight-250)/250)*ems2;
+                        ems_gst=ems_tar*18/100;
+                        ems_tar_total=ems_tar+ems_gst;
+                    } else{
+                        ems_tar=ems1+(1+Math.floor((weight-250)/250))*ems2;
+                        ems_gst=ems_tar*18/100;
+                        ems_tar_total=ems_tar+ems_gst;
+                    }
+                }
+            }
+            // EMS tariff calculation end
+
+            // ITPS tariff calculation begin
+            if(itps_wt==0){
+                itps_tar='No Service';
+                itps_gst='No Service';
+                itps_tar_total='No Service';
+            } else if(weight>itps_wt){
+                itps_tar='Maximum weight is '+itps_wt+' Grams';
+                itps_gst='Maximum weight is '+itps_wt+' Grams';
+                itps_tar_total='Maximum weight is '+itps_wt+' Grams';
+            } else{
+                if(weight<=50){
+                    itps_tar=itps1;
+                    itps_gst=itps_tar*18/100;
+                    itps_tar_total=itps_tar+itps_gst;
+                } else{
+                    if((weight-50)%50===0){
+                        itps_tar=itps1+((weight-50)/50)*itps2;
+                        itps_gst=itps_tar*18/100;
+                        itps_tar_total=itps_tar+itps_gst;
+                    } else{
+                        itps_tar=itps1+(1+Math.floor((weight-50)/50))*itps2;
+                        itps_gst=itps_tar*18/100;
+                        itps_tar_total=itps_tar+itps_gst;
+                    }
+                }
+            }
+            // ITPS tariff calculation end
+
+            // RL Tariff calculation begin
+            if(rl_wt==0){
+                rl_tar='No Service';
+                rl_gst='No Service';
+                rl_tar_total='No Service';
+            } else if(weight>rl_wt){
+                rl_tar='Maximum weight is '+rl_wt+' Grams';
+                rl_gst='Maximum weight is '+rl_wt+' Grams';
+                rl_tar_total='Maximum weight is '+rl_wt+' Grams';
+            } else{
+                if(weight<=20){
+                    rl_tar=rl1;
+                    rl_gst=rl_tar*18/100;
+                    rl_tar_total=rl_tar+rl_gst;
+                } else{
+                    if((weight-20)%20===0){
+                        rl_tar=rl1+((weight-20)/20)*rl2;
+                        rl_gst=rl_tar*18/100;
+                        rl_tar_total=rl_tar+rl_gst;
+                    } else{
+                        rl_tar=rl1+(1+Math.floor((weight-20)/20))*rl2;
+                        rl_gst=rl_tar*18/100;
+                        rl_tar_total=rl_tar+rl_gst;
+                    }
+                }
+            }
+            // RL tariff calculation end
+
+            // Returning calculated results
+
+            return [air_tar,air_gst,air_tar_total,ems_tar,ems_gst,ems_tar_total,itps_tar,itps_gst,itps_tar_total,rl_tar,rl_gst,rl_tar_total];
+
+        }
+        
+    </script>
+</head>
+<body>
+    <main-head>Indiapost International Tariff</main-head>
+    <container>
+
+    <label for="destination_dropdown">Select Destination:</label>
+    <select id="destination_dropdown" required>
+        <option value="" disabled selected>Select an option</option>
+
+    </select>
+    <label for="weight">Weight in Grams:</label>
+    <input type="number" id="weight" name="weight" autocomplete="on" min=1 required placeholder="Please Enter Weight" on>
+    <button type="submit" onclick="sub_fun()">Submit</button>
+    </container>
+
+    <table>
+        <caption id="caption"></caption>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Tariff <br>(Excluding GST)</th>
+                <th>GST Amount</th>
+                <th>Total Tariff</th>
+            </tr>
+        </thead>
+        <tbody id="main_table">
+            <tr id="air_parcel">
+                <!-- <th>AIR PARCEL</th> -->
+
+            </tr>
+            <tr id="ems">
+                <!-- <th>EMS Merchandise</th> -->
+            </tr>
+            <tr id="itps">
+                <!-- <th>ITPS</th> -->
+            </tr>
+            <tr id="rl">
+                <!-- <th>Registered Letter <br> (Excluding Air Sur-Charge)</th> -->
+            </tr>
+        </tbody>
+    </table>
+
+<h1>Log:</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Destination</th>
+            <th>Weight</th>
+            <th>AIR PARCEL</th>
+            <th>EMS Merchandise</th>
+            <th>ITPS</th>
+            <th>Registered Letter</th>
+        </tr>
+    </thead>
+    <tbody id="log">
+        
+    </tbody>
+</table>
+</body>
+<script>
+    const destinations=master_data.map(items=>items.Destination)
+    const destination_dropdown=document.getElementById('destination_dropdown')
+
+    destinations.forEach(d=> {
+        const option=document.createElement('option');
+        option.value=d;
+        option.textContent=d;
+        destination_dropdown.appendChild(option);
+    });
+
+    function sub_fun(){
+            const destination_selected = document.getElementById('destination_dropdown').value;
+            const weight_entered=parseInt(document.getElementById('weight').value);
+
+            if (weight_entered && destination_selected){
+                document.getElementById('caption').innerHTML= `Destination: --- ${destination_selected} <br><br> Weight: --- ${weight_entered} Grams<br><br>`;
+
+                tariff_list=tariff_cal(destination_selected,weight_entered);
+                addLog(destination_selected,weight_entered,tariff_list[2],tariff_list[5],tariff_list[8],tariff_list[11]);
+                
+                var main_table_body=document.getElementById('main_table');
+
+                var tr_ap_old=document.getElementById('air_parcel');
+                var tr_ems_old=document.getElementById('ems');
+                var tr_itps_old=document.getElementById('itps');
+                var tr_rl_old=document.getElementById('rl');
+
+                var tr_ap=document.createElement('tr');
+                tr_ap.id='air_parcel';
+                var tr_ems=document.createElement('tr');
+                tr_ems.id='ems';
+                var tr_itps=document.createElement('tr');
+                tr_itps.id='itps';
+                var tr_rl=document.createElement('tr');
+                tr_rl.id='rl';
+
+                var td_ap_th=document.createElement('th');
+                var td_ap_th_text=document.createTextNode('AIR PARCEL');
+                td_ap_th.appendChild(td_ap_th_text);
+                tr_ap.appendChild(td_ap_th);
+
+                var td_ap_tar=document.createElement('td');
+                var td_ap_gst=document.createElement('td');
+                var td_ap_tar_total=document.createElement('td');
+
+                if (isNaN(tariff_list[0])){
+                    var td_ap_tar_text=document.createTextNode(tariff_list[0]);
+                    var td_ap_gst_text=document.createTextNode(tariff_list[1]);
+                    var td_ap_tar_total_text=document.createTextNode(tariff_list[2]);
+                } else {
+                    var td_ap_tar_text=document.createTextNode(fti(Math.round(tariff_list[0])));
+                    var td_ap_gst_text=document.createTextNode(fti(Math.round(tariff_list[1])));
+                    var td_ap_tar_total_text=document.createTextNode(fti(Math.round(tariff_list[2])));
+                }          
+                td_ap_tar.appendChild(td_ap_tar_text);
+                td_ap_gst.appendChild(td_ap_gst_text);
+                td_ap_tar_total.appendChild(td_ap_tar_total_text);
+
+                tr_ap.appendChild(td_ap_tar);
+                tr_ap.appendChild(td_ap_gst);
+                tr_ap.appendChild(td_ap_tar_total);
+
+                var td_ems_th=document.createElement('th');
+                var td_ems_th_text=document.createTextNode('EMS Merchandise');
+                td_ems_th.appendChild(td_ems_th_text);
+                tr_ems.appendChild(td_ems_th);
+
+                var td_ems_tar=document.createElement('td');
+                var td_ems_gst=document.createElement('td');
+                var td_ems_tar_total=document.createElement('td');
+
+                if (isNaN(tariff_list[3])){
+                    var td_ems_tar_text=document.createTextNode(tariff_list[3]);
+                    var td_ems_gst_text=document.createTextNode(tariff_list[4]);
+                    var td_ems_tar_total_text=document.createTextNode(tariff_list[5]);
+                } else {
+                    var td_ems_tar_text=document.createTextNode(fti(Math.round(tariff_list[3])));
+                    var td_ems_gst_text=document.createTextNode(fti(Math.round(tariff_list[4])));
+                    var td_ems_tar_total_text=document.createTextNode(fti(Math.round(tariff_list[5])));
+
+                }
+                td_ems_tar.appendChild(td_ems_tar_text);
+                td_ems_gst.appendChild(td_ems_gst_text);
+                td_ems_tar_total.appendChild(td_ems_tar_total_text);
+
+                tr_ems.appendChild(td_ems_tar);
+                tr_ems.appendChild(td_ems_gst);
+                tr_ems.appendChild(td_ems_tar_total);
+                
+                var td_itps_th=document.createElement('th');
+                var td_itps_th_text=document.createTextNode('ITPS');
+                td_itps_th.appendChild(td_itps_th_text);
+                tr_itps.appendChild(td_itps_th);
+
+                var td_itps_tar=document.createElement('td');
+                var td_itps_gst=document.createElement('td');
+                var td_itps_tar_total=document.createElement('td');
+
+                if (isNaN(tariff_list[6])){
+                    var td_itps_tar_text=document.createTextNode(tariff_list[6]);
+                    var td_itps_gst_text=document.createTextNode(tariff_list[7]);
+                    var td_itps_tar_total_text=document.createTextNode(tariff_list[8]);
+                } else{
+                    var td_itps_tar_text=document.createTextNode(fti(Math.round(tariff_list[6])));
+                    var td_itps_gst_text=document.createTextNode(fti(Math.round(tariff_list[7])));
+                    var td_itps_tar_total_text=document.createTextNode(fti(Math.round(tariff_list[8])));
+                }
+                td_itps_tar.appendChild(td_itps_tar_text);
+                td_itps_gst.appendChild(td_itps_gst_text);
+                td_itps_tar_total.appendChild(td_itps_tar_total_text);
+
+                tr_itps.appendChild(td_itps_tar);
+                tr_itps.appendChild(td_itps_gst);
+                tr_itps.appendChild(td_itps_tar_total);
+
+                var td_rl_th=document.createElement('th');
+                td_rl_th.innerHTML='Registered Letter <br> (Excluding Air Sur-Charge)';
+                tr_rl.appendChild(td_rl_th);
+
+                var td_rl_tar=document.createElement('td');
+                var td_rl_gst=document.createElement('td');
+                var td_rl_tar_total=document.createElement('td');
+
+                if (isNaN(tariff_list[9])){
+                    var td_rl_tar_text=document.createTextNode(tariff_list[9]);
+                    var td_rl_gst_text=document.createTextNode(tariff_list[10]);
+                    var td_rl_tar_total_text=document.createTextNode(tariff_list[11]);
+                } else {
+                    var td_rl_tar_text=document.createTextNode(fti(Math.round(tariff_list[9])));
+                    var td_rl_gst_text=document.createTextNode(fti(Math.round(tariff_list[10])));
+                    var td_rl_tar_total_text=document.createTextNode(fti(Math.round(tariff_list[11])));
+                }
+                td_rl_tar.appendChild(td_rl_tar_text);
+                td_rl_gst.appendChild(td_rl_gst_text);
+                td_rl_tar_total.appendChild(td_rl_tar_total_text);
+
+                tr_rl.appendChild(td_rl_tar);
+                tr_rl.appendChild(td_rl_gst);
+                tr_rl.appendChild(td_rl_tar_total);
+                
+                main_table_body.replaceChild(tr_ap,tr_ap_old);
+                main_table_body.replaceChild(tr_ems,tr_ems_old);
+                main_table_body.replaceChild(tr_itps,tr_itps_old);
+                main_table_body.replaceChild(tr_rl,tr_rl_old);
+
+            } else{
+                alert('Please enter Valid details')
+            }
+            
+
+        }
+</script>
+</html>
